@@ -1,0 +1,39 @@
+enable
+configure terminal
+hostname SW2
+
+# Create VLAN database
+vlan 10
+vlan 20
+ name HR
+vlan 30
+ name IT
+exit
+
+# Trunk link back to Core Switch
+interface fa0/1
+ switchport mode trunk
+exit
+
+# Assign HR Ports (Fa0/2 to Fa0/6)
+interface range fa0/2 - 6
+ switchport mode access
+ switchport access vlan 20
+ spanning-tree portfast
+exit
+
+# Assign IT Ports (Fa0/7 to Fa0/12)
+interface range fa0/7 - 12
+ switchport mode access
+ switchport access vlan 30
+ spanning-tree portfast
+exit
+
+# Management SVI
+interface vlan 10
+ ip address 192.168.10.3 255.255.255.0
+ no shutdown
+exit
+ip default-gateway 192.168.10.1
+
+write memory
